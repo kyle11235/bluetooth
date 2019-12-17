@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">bluetooth</string>
+
+    <!-- nav -->
+    <string name="title_server">Server</string>
+    <string name="title_client">Client</string>
+    <string name="title_peripheral">Peripheral</string>
+    <string name="title_central">Central</string>
+
+    <!-- bluetooth -->
+    <string name="blue_no_adaptor">本机没有找到蓝牙硬件或驱动</string>
+    <string name="blue_no_pair">未配对</string>
+    <string name="blue_ok_pair">配对</string>
+    <string name="blue_no_connection">设备已断开链接</string>
+    <string name="blue_ok_connection">设备绑定成功</string>
+    <string name="blue_connect_success">与%s(%s)连接成功</string>
+    <string name="blue_receiving_file">正在接收文件,文件名为</string>
+    <string name="blue_received_file">文件接收完成，存放在</string>
+    <string name="blue_sending_file">正在发送文件,路径为</string>
+    <string name="blue_sent_file">文件发送完成</string>
+    <string name="blue_reScan">重新扫描</string>
+
+
+</resources>
