@@ -146,6 +146,7 @@ public class BtBase {
      * 发送短消息
      */
     public void sendMessage(String message) {
+        BtBase.log("sendMessage=" + message);
         lock.lock();
         try {
 

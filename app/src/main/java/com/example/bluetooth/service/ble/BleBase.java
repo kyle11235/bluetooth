@@ -17,7 +17,7 @@ public class BleBase {
     public static final int REQ_PERMISSION_CODE = 0x1000;
     protected Context context;
     protected BluetoothManager manager;
-    protected static BluetoothAdapter adapter;
+    protected BluetoothAdapter adapter;
 
     public BleBase(Context context) {
         this.context = context;
@@ -41,7 +41,7 @@ public class BleBase {
         }
     }
 
-    public static boolean enableAdapter() {
+    public boolean enableAdapter() {
         if (adapter == null) {
             return false;
         }

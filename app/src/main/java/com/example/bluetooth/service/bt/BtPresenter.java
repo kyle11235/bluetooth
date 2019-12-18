@@ -11,6 +11,7 @@ public class BtPresenter {
     private BtView view;
     private Context context;
     private BtReceiver btReceiver;
+    private BtClient client;
 
     public BtPresenter(BtView view, Context context) {
         this.view = view;
@@ -25,6 +26,14 @@ public class BtPresenter {
                     return;
                 }
                 finalView.addDevice(device);
+            }
+        });
+
+        // client
+        client = new BtClient(new BtBase.Listener() {
+            @Override
+            public void onBlueEvent(String type, Object object) {
+                BtBase.log("onBlueEvent, type=" + type + ", object=" + object.toString());
             }
         });
     }
@@ -42,6 +51,17 @@ public class BtPresenter {
             view.updateDeviceList(boundedDevices);
         } else {
             view.showNoAdaptor();
+        }
+    }
+
+    public void connect(BluetoothDevice device){
+        client.connect(device);
+    }
+
+    public void sendMessage(String message){
+        BtBase.log("client isConnected=" + client.isConnected());
+        if(client.isConnected()){
+            client.sendMessage(message);
         }
     }
 

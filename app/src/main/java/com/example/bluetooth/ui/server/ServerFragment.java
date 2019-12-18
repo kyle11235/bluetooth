@@ -18,22 +18,12 @@ import com.example.bluetooth.R;
 import com.example.bluetooth.service.bt.BtBase;
 import com.example.bluetooth.service.bt.BtServer;
 
+import org.w3c.dom.Text;
+
 public class ServerFragment extends Fragment {
 
-    private ServerViewModel serverViewModel;
-    private Button btn;
-
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        serverViewModel = ViewModelProviders.of(this).get(ServerViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_server, container, false);
-        final TextView textView = root.findViewById(R.id.text);
-        serverViewModel.getText().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
-        return root;
+        return inflater.inflate(R.layout.fragment_server, container, false);
     }
 
     // only after main activity is created, you can find view
@@ -42,17 +32,24 @@ public class ServerFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         // create server
-        btn = getActivity().findViewById(R.id.btnStart);
+        Button btn = getActivity().findViewById(R.id.btnStart);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                final TextView txt = getActivity().findViewById(R.id.txtServer);
+                txt.setText(txt.getText() + "\n" + "server is started");
+                APP.log("server is started");
+
                 BtServer btServer = new BtServer(new BtBase.Listener() {
                     @Override
                     public void onBlueEvent(String type, Object object) {
+                        txt.setText(txt.getText() + "\n" + "onBlueEvent, type=" + type + ", object=" + object.toString());
                         APP.log("onBlueEvent, type=" + type + ", object=" + object.toString());
                     }
                 });
                 btServer.serve();
+
             }
         });
 

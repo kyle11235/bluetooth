@@ -22,6 +22,7 @@ public class BtActivity extends Activity implements BtView {
 
     // layout
     Button btnScan = null;
+    Button btnSend = null;
     RecyclerView listView = null;
     private BtItemAdapter btItemAdapter = null;
 
@@ -36,6 +37,7 @@ public class BtActivity extends Activity implements BtView {
         // 1.layout
         setContentView(R.layout.activity_bluetooth);
         btnScan = findViewById(R.id.btnScan);
+        btnSend = findViewById(R.id.btnSend);
 
         // 2.presenter
         presenter = new BtPresenter(this, this);
@@ -62,23 +64,33 @@ public class BtActivity extends Activity implements BtView {
 
     private void initListener() {
 
-        // item click
-        final Activity finalContext = this;
-        btItemAdapter.addItemClickListener(new BtItemAdapter.ItemClickListener() {
-            @Override
-            public void onItemClick(BluetoothDevice item) {
-                // post event
-                // EventBus.getDefault().post(new Event(Event.CONNECT_BLUE, item));
-                BtBase.log("send event to connect device, name=" + item.getName());
-                finalContext.finish();
-            }
-        });
-
         // scan click
         btnScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 presenter.scan();
+            }
+        });
+
+        // item click
+        final Activity finalContext = this;
+        btItemAdapter.addItemClickListener(new BtItemAdapter.ItemClickListener() {
+            @Override
+            public void onItemClick(BluetoothDevice item) {
+
+                // connect it
+                // or you can post event and connect it somewhere else
+                // EventBus.getDefault().post(new Event(Event.CONNECT_BLUE, item));
+                // finalContext.finish();
+                presenter.connect(item);
+            }
+        });
+
+        // send click
+        btnSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presenter.sendMessage("hello world");
             }
         });
 

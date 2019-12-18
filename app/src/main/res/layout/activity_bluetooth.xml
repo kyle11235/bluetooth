@@ -15,6 +15,12 @@
         android:onClick="reScan"
         android:text="@string/blue_reScan" />
 
+    <Button
+        android:id="@+id/btnSend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="hello world" />
+
 <!--    <android.support.v7.widget.RecyclerView-->
 <!--        android:id="@+id/listView"-->
 <!--        android:layout_width="match_parent"-->
@@ -33,6 +39,7 @@
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:visibility="gone" />
+
 
 
 

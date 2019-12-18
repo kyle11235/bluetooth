@@ -11,8 +11,6 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.example.bluetooth.APP;
 import com.example.bluetooth.R;
@@ -20,34 +18,24 @@ import com.example.bluetooth.service.bt.BtActivity;
 
 public class ClientFragment extends Fragment {
 
-    private ClientViewModel clientViewModel;
-    private Button btn;
-
-
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        clientViewModel = ViewModelProviders.of(this).get(ClientViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_client, container, false);
-        final TextView textView = root.findViewById(R.id.text);
-        clientViewModel.getText().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
-        return root;
+        return inflater.inflate(R.layout.fragment_client, container, false);
     }
-
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         // go to scan page
-        btn = getActivity().findViewById(R.id.btnGo);
+        Button btn = getActivity().findViewById(R.id.btnGo);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                APP.log("onClick");
+
+                final TextView txt = getActivity().findViewById(R.id.txtClient);
+                txt.setText(txt.getText() + "\n" + "go scan");
+                APP.log("go scan");
+
                 startActivity(new Intent(getActivity(), BtActivity.class));
             }
         });
