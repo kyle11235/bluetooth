@@ -24,9 +24,6 @@ import com.example.bluetooth.service.ble.BlePresenter;
 
 public class CentralFragment extends Fragment {
 
-    // set from ble item click
-    public static BluetoothDevice device;
-
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_central, container, false);
     }
@@ -71,7 +68,14 @@ public class CentralFragment extends Fragment {
             }
         });
 
-        // display details
-
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        APP.log("onStart");
+        BlePresenter.displayDetails();
+    }
+
+
 }

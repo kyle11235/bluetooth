@@ -82,7 +82,6 @@ public class BleActivity extends Activity implements BleView {
                 // EventBus.getDefault().post(new Event(Event.CONNECT_BLUE, item));
 
                 presenter.connect(item);
-                CentralFragment.device = item;
                 finalContext.finish();
             }
         });

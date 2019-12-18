@@ -84,4 +84,11 @@ public class BlePresenter {
         client.readCharacteristic(characteristic);
     }
 
+    public static void displayDetails(){
+        if (client == null) {
+            return;
+        }
+        client.displayDetails();
+    }
+
 }

@@ -4,8 +4,15 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
+
+import com.example.bluetooth.R;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class BleClient extends BleBase {
@@ -52,6 +59,19 @@ public class BleClient extends BleBase {
                 read(characteristic);
             }
         }
+
+        @Override
+        // write result
+        public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+            // xxx
+        }
+
+        @Override
+        // get notified
+        public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+            // xxx
+        }
+
     };
 
     public BleClient(Context context, Listener listener) {
@@ -67,10 +87,10 @@ public class BleClient extends BleBase {
         return gattClient.discoverServices();
     }
 
-    // read by client
+    // read started by client
     public Boolean readCharacteristic(BluetoothGattCharacteristic characteristic) {
         log("readCharacteristic");
-        if(gattClient == null){
+        if (gattClient == null) {
             return false;
         }
         return gattClient.readCharacteristic(characteristic);
@@ -107,4 +127,47 @@ public class BleClient extends BleBase {
             }
         }
     }
+
+    // Receive GATT notifications
+    public Boolean setCharacteristicNotification(BluetoothGattCharacteristic characteristic, Boolean enabled) {
+        // -> onCharacteristicChanged
+        return gattClient.setCharacteristicNotification(characteristic, enabled);
+    }
+
+    public void displayDetails() {
+
+        if (gattClient == null) {
+            return;
+        }
+
+
+        List<BluetoothGattService> serviceList = gattClient.getServices();
+        log("displayDetails, service size=" + serviceList.size());
+
+        // Loops through available GATT Services.
+        for (BluetoothGattService gattService : serviceList) {
+            String uuid = gattService.getUuid().toString();
+            log("service uuid=" + uuid);
+
+            List<BluetoothGattCharacteristic> characteristicsList = gattService.getCharacteristics();
+            log("characteristic size=" + characteristicsList.size());
+
+            // Loops through available Characteristics.
+            for (BluetoothGattCharacteristic characteristic : characteristicsList) {
+                uuid = characteristic.getUuid().toString();
+                log("characteristic uuid=" + uuid);
+                this.read(characteristic);
+            }
+        }
+    }
+
+
+    public void close() {
+        if (gattClient == null) {
+            return;
+        }
+        gattClient.close();
+        gattClient = null;
+    }
+
 }
