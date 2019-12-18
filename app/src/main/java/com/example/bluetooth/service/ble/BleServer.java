@@ -21,6 +21,7 @@ public class BleServer extends BleBase{
     private BluetoothDevice connectedDevice; // here only hold 1 device
     private Boolean isServing = false;
 
+    // gattServerCallback == BtBase.Listener for server
     private final BluetoothGattServerCallback gattServerCallback = new BluetoothGattServerCallback() {
         @Override
         public void onConnectionStateChange(BluetoothDevice device, final int status, int newState) {
@@ -35,7 +36,7 @@ public class BleServer extends BleBase{
                 }
             } else {
                 connectedDevice = null;
-                log("Error when connecting: " + status);
+                log("Error when connecting=" + status);
             }
         }
 
@@ -50,12 +51,6 @@ public class BleServer extends BleBase{
                 return;
             }
             gattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, characteristic.getValue());
-        }
-
-        @Override
-        public void onNotificationSent(BluetoothDevice device, int status) {
-            super.onNotificationSent(device, status);
-            log("Notification sent, Status=" + status);
         }
 
         @Override
@@ -75,14 +70,20 @@ public class BleServer extends BleBase{
             }
         }
 
+        @Override
+        public void onNotificationSent(BluetoothDevice device, int status) {
+            super.onNotificationSent(device, status);
+            log("Notification sent, Status=" + status);
+        }
+
         // on read descriptor
 
         // on write descriptor
 
     };
 
-    public BleServer(Context context){
-        super(context);
+    public BleServer(Context context, Listener listener){
+        super(context, listener);
         if (enableAdapter()) {
             gattServer = manager.openGattServer(context, gattServerCallback);
             isServing = true;

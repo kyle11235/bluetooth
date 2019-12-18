@@ -11,13 +11,14 @@ public class BtPresenter {
     private BtView view;
     private Context context;
     private BtReceiver btReceiver;
-    private BtClient client;
+    public static BtClient client;
 
     public BtPresenter(BtView view, Context context) {
         this.view = view;
         this.context = context;
 
         final BtView finalView = this.view;
+
         // receiver as service, listen to broadcast
         btReceiver = new BtReceiver(context, new BtReceiver.Listener() {
             @Override
@@ -25,6 +26,7 @@ public class BtPresenter {
                 if (isViewDestroyed) {
                     return;
                 }
+                // add device into list
                 finalView.addDevice(device);
             }
         });
@@ -58,7 +60,10 @@ public class BtPresenter {
         client.connect(device);
     }
 
-    public void sendMessage(String message){
+    public static void sendMessage(String message){
+        if(client == null){
+            return;
+        }
         BtBase.log("client isConnected=" + client.isConnected());
         if(client.isConnected()){
             client.sendMessage(message);

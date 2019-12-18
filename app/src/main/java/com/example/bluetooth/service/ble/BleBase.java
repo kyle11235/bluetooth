@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
-import android.bluetooth.le.BluetoothLeScanner;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -19,8 +18,26 @@ public class BleBase {
     protected BluetoothManager manager;
     protected BluetoothAdapter adapter;
 
-    public BleBase(Context context) {
+    public interface Listener {
+
+        String FOUND_DEVICE = "FOUND_DEVICE";
+
+        String CONNECTED = "CONNECTED";
+        String DISCONNECTED = "DISCONNECTED";
+
+        String DISCOVERING = "DISCOVERING";
+        String DISCOVERED = "DISCOVERED";
+
+        String READ_CHARACTERISTIC = "READ_CHAREAD_CHARACTERISTICRACTERITIC";
+
+        void onBlueEvent(String type, Object object);
+    }
+
+    protected Listener listener;
+
+    public BleBase(Context context, Listener listener) {
         this.context = context;
+        this.listener = listener;
         this.manager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
         this.adapter = manager.getAdapter();
     }
@@ -45,12 +62,20 @@ public class BleBase {
         if (adapter == null) {
             return false;
         }
+
         if (!adapter.isEnabled()) {
             log("adapter is not enabled");
             Boolean result = adapter.enable();
             log("adapter is enabled=" + result);
             return result;
         }
+
+        // check ble feature
+        if (!context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+            return false;
+        }
+
+        // check advertise
         if (!adapter.isMultipleAdvertisementSupported()) {
             log("Multiple advertisement not supported");
             return false;

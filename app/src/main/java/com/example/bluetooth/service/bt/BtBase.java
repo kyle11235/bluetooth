@@ -29,9 +29,6 @@ public class BtBase {
 
     public interface Listener {
 
-        String NO_ADAPTER = "NO_ADAPTER";
-
-        String CONNECTING = "CONNECTING";
         String CONNECTED = "CONNECTED";
         String DISCONNECTED = "DISCONNECTED";
 

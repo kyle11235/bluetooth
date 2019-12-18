@@ -5,8 +5,13 @@
     <!-- bluetooth -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
+    <!-- wifi mac address-->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+    <!-- if you want to make your app available to devices that don't support BLE, you should still include this and set to false -->
     <uses-feature
         android:name="android.hardware.bluetooth_le"
         android:required="false" />
@@ -31,6 +36,10 @@
 
         <activity
             android:name=".service.bt.BtActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".service.ble.BleActivity"
             android:screenOrientation="portrait" />
     </application>
 

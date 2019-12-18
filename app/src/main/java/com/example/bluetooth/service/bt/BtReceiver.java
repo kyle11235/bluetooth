@@ -62,7 +62,7 @@ public class BtReceiver extends BroadcastReceiver {
             case BluetoothDevice.ACTION_FOUND:
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (device != null)
-                    BtBase.log("remote device discovered, name=" + device.getName() + ", address=" + device.getAddress());
+                    BtBase.log("remote device found, name=" + device.getName() + ", address=" + device.getAddress());
 
                 short rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MAX_VALUE);
                 BtBase.log("RSSI=" + rssi);

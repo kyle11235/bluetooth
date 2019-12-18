@@ -3,6 +3,8 @@ package com.example.bluetooth;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.example.bluetooth.service.ble.BleBase;
+import com.example.bluetooth.service.bt.BtBase;
 import com.example.bluetooth.service.bt.BtClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -36,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         APP.requestPermission(this);
 
         // enable bluetooth
-        if (!BtClient.enableAdapter()) {
+        if (!new BleBase(this, null).enableAdapter()) {
             Toast.makeText(this, getString(R.string.blue_no_adaptor), Toast.LENGTH_SHORT);
         }
 

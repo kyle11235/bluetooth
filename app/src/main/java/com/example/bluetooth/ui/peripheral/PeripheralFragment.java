@@ -13,7 +13,10 @@ import androidx.fragment.app.Fragment;
 
 import com.example.bluetooth.APP;
 import com.example.bluetooth.R;
+import com.example.bluetooth.service.ble.BleBase;
 import com.example.bluetooth.service.ble.BlePeripheral;
+import com.example.bluetooth.service.ble.BleServer;
+import com.example.bluetooth.service.ble.service.BatteryService;
 
 public class PeripheralFragment extends Fragment {
 
@@ -25,18 +28,31 @@ public class PeripheralFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        // go to scan page
+        final TextView txt = getActivity().findViewById(R.id.txtPeripheral);
+
+        // advertise
         Button btn = getActivity().findViewById(R.id.btnAdvertise);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                final TextView txt = getActivity().findViewById(R.id.txtPeripheral);
+                // open GATT server
+                BleServer server = new BleServer(getContext(), new BleBase.Listener() {
+                    @Override
+                    public void onBlueEvent(String type, Object object) {
+                        APP.log("onBlueEvent, type=" + type + ", object=" + object.toString());
+                        txt.setText(txt.getText() + "\n" + object.toString());
+                    }
+                });
+                server.addService(new BatteryService());
+                txt.setText(txt.getText() + "\n" + "add service");
+                APP.log("add service");
+
+                // advertise
+                BlePeripheral peripheral = new BlePeripheral(getContext(), null);
+                peripheral.advertise();
                 txt.setText(txt.getText() + "\n" + "advertise");
                 APP.log("advertise");
-
-                BlePeripheral peripheral = new BlePeripheral(getContext());
-                peripheral.advertise();
 
             }
         });

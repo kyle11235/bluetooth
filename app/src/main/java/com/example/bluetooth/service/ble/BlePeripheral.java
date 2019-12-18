@@ -48,8 +48,8 @@ public class BlePeripheral extends BleBase{
         }
     };
 
-    public BlePeripheral(Context context) {
-        super(context);
+    public BlePeripheral(Context context, Listener listener) {
+        super(context, listener);
     }
 
     public void advertise() {
@@ -62,15 +62,18 @@ public class BlePeripheral extends BleBase{
                 .build();
 
         AdvertiseData data = new AdvertiseData.Builder()
+                .setIncludeDeviceName(true) // this enables ios to get device name
                 .setIncludeTxPowerLevel(true)
                 .build();
 
         AdvertiseData scanResponse = new AdvertiseData.Builder()
-                .setIncludeDeviceName(true)
+                // .setIncludeDeviceName(true)
                 .build();
 
         log("startAdvertising");
         advertiser.startAdvertising(settings, data, scanResponse, advertisingCallback);
+
+        // how to know if advertisting has stopped?
     }
 
     public void close() {

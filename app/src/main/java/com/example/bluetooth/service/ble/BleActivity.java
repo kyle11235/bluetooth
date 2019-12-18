@@ -1,32 +1,33 @@
-package com.example.bluetooth.service.bt;
+package com.example.bluetooth.service.ble;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
-
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bluetooth.R;
-
+import com.example.bluetooth.service.bt.BtItemAdapter;
+import com.example.bluetooth.service.bt.BtPresenter;
+import com.example.bluetooth.service.bt.BtView;
+import com.example.bluetooth.ui.central.CentralFragment;
 
 import java.util.Set;
 
 
-public class BtActivity extends Activity implements BtView {
+public class BleActivity extends Activity implements BleView {
 
     // layout
     Button btnScan = null;
     RecyclerView listView = null;
-    private BtItemAdapter btItemAdapter = null;
+    private BleItemAdapter bleItemAdapter = null;
 
     // presenter
-    private BtPresenter presenter = null;
+    private BlePresenter presenter = null;
 
     // common begin
     @Override
@@ -38,12 +39,12 @@ public class BtActivity extends Activity implements BtView {
         btnScan = findViewById(R.id.btnScan);
 
         // 2.presenter
-        presenter = new BtPresenter(this, this);
+        presenter = new BlePresenter(this, this);
         listView = findViewById(R.id.listView);
         listView.setLayoutManager(new LinearLayoutManager(this));
 
-        btItemAdapter = new BtItemAdapter(this);
-        listView.setAdapter(btItemAdapter);
+        bleItemAdapter = new BleItemAdapter(this);
+        listView.setAdapter(bleItemAdapter);
 
         // 3.listener
         this.initListener();
@@ -72,7 +73,7 @@ public class BtActivity extends Activity implements BtView {
 
         // item click
         final Activity finalContext = this;
-        btItemAdapter.addItemClickListener(new BtItemAdapter.ItemClickListener() {
+        bleItemAdapter.addItemClickListener(new BleItemAdapter.ItemClickListener() {
             @Override
             public void onItemClick(BluetoothDevice item) {
 
@@ -81,6 +82,7 @@ public class BtActivity extends Activity implements BtView {
                 // EventBus.getDefault().post(new Event(Event.CONNECT_BLUE, item));
 
                 presenter.connect(item);
+                CentralFragment.device = item;
                 finalContext.finish();
             }
         });
@@ -92,7 +94,7 @@ public class BtActivity extends Activity implements BtView {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                btItemAdapter.update(deviceSet);
+                bleItemAdapter.update(deviceSet);
             }
         });
     }
@@ -103,7 +105,7 @@ public class BtActivity extends Activity implements BtView {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                btItemAdapter.add(device);
+                bleItemAdapter.add(device);
             }
         });
     }

@@ -1,4 +1,4 @@
-package com.example.bluetooth.service.bt;
+package com.example.bluetooth.service.ble;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 
-public class BtItemAdapter extends RecyclerView.Adapter<BtItemAdapter.ItemHolder> {
+public class BleItemAdapter extends RecyclerView.Adapter<BleItemAdapter.ItemHolder> {
 
 
     interface ItemClickListener {
@@ -31,7 +31,7 @@ public class BtItemAdapter extends RecyclerView.Adapter<BtItemAdapter.ItemHolder
     private Activity context;
     private final List<BluetoothDevice> list = new ArrayList<>();
 
-    public BtItemAdapter(Activity context) {
+    public BleItemAdapter(Activity context) {
         this.context = context;
     }
 
@@ -73,6 +73,7 @@ public class BtItemAdapter extends RecyclerView.Adapter<BtItemAdapter.ItemHolder
         }
         notifyDataSetChanged();
     }
+
 
     public void add(BluetoothDevice device) {
         if (list.contains(device.getAddress()))

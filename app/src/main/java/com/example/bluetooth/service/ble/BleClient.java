@@ -1,12 +1,110 @@
 package com.example.bluetooth.service.ble;
 
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCallback;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothProfile;
 import android.content.Context;
+import java.util.UUID;
 
-// discover services from GATT server
 public class BleClient extends BleBase {
 
-    public BleClient(Context context){
-        super(context);
+    public final static UUID HEART_RATE_MEASUREMENT_UUID = UUID.fromString("0000180D-0000-1000-8000-00805f9b34fb");
+
+    private BluetoothGatt gattClient;
+
+    // gattCallback == BtBase.Listener for client, to get read / write result
+    // convert gattCallback to Listener who only has onBlueEvent for simplicity
+    private BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
+        @Override
+        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+            if (newState == BluetoothProfile.STATE_CONNECTED) {
+                log("Connected to GATT server");
+                listener.onBlueEvent(Listener.CONNECTED, "Connected to GATT server");
+
+                log("Attempting to start service discovery=" + discoverServices());
+                listener.onBlueEvent(Listener.DISCOVERING, "discovering services");
+
+            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                log("Disconnected from GATT server");
+                listener.onBlueEvent(Listener.DISCONNECTED, "Disconnected from GATT server");
+            }
+        }
+
+        @Override
+        // New services discovered
+        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                log("new services discovered");
+                listener.onBlueEvent(Listener.DISCOVERED, "new services discovered");
+            } else {
+                log("onServicesDiscovered=" + status);
+                listener.onBlueEvent(Listener.DISCOVERED, "onServicesDiscovered=" + status);
+            }
+        }
+
+        @Override
+        // Result of a characteristic read operation
+        public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                log("characteristic read result=" + characteristic.toString());
+                read(characteristic);
+            }
+        }
+    };
+
+    public BleClient(Context context, Listener listener) {
+        super(context, listener);
     }
 
+    public void connect(BluetoothDevice device, Boolean autoReconnect) {
+        gattClient = device.connectGatt(context, autoReconnect, gattCallback);
+        log("connecting to GATT server");
+    }
+
+    public Boolean discoverServices() {
+        return gattClient.discoverServices();
+    }
+
+    // read by client
+    public Boolean readCharacteristic(BluetoothGattCharacteristic characteristic) {
+        log("readCharacteristic");
+        if(gattClient == null){
+            return false;
+        }
+        return gattClient.readCharacteristic(characteristic);
+    }
+
+    // read result from server
+    private void read(final BluetoothGattCharacteristic characteristic) {
+        // This is special handling for the Heart Rate Measurement profile. Data
+        // parsing is carried out as per profile specifications.
+        if (HEART_RATE_MEASUREMENT_UUID.equals(characteristic.getUuid())) {
+            int flag = characteristic.getProperties();
+            int format = -1;
+            if ((flag & 0x01) != 0) {
+                format = BluetoothGattCharacteristic.FORMAT_UINT16;
+                log("Heart rate format UINT16.");
+            } else {
+                format = BluetoothGattCharacteristic.FORMAT_UINT8;
+                log("Heart rate format UINT8.");
+            }
+            final int heartRate = characteristic.getIntValue(format, 1);
+            log(String.format("Received heart rate: %d", heartRate));
+            listener.onBlueEvent(Listener.READ_CHARACTERISTIC, heartRate);
+        } else {
+            // For all other profiles, writes the data formatted in HEX.
+            final byte[] data = characteristic.getValue();
+            if (data != null && data.length > 0) {
+                final StringBuilder stringBuilder = new StringBuilder(data.length);
+                for (byte byteChar : data) {
+                    stringBuilder.append(String.format("%02X ", byteChar));
+                }
+                log("string data=" + new String(data));
+                log("string data=" + stringBuilder.toString());
+                listener.onBlueEvent(Listener.READ_CHARACTERISTIC, new String(data));
+            }
+        }
+    }
 }

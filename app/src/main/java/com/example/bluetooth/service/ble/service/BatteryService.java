@@ -36,7 +36,10 @@ public class BatteryService implements Service{
 
         // character
         gattCharacteristic = new BluetoothGattCharacteristic(BATTERY_LEVEL_UUID,
-                BluetoothGattCharacteristic.PROPERTY_READ | BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT | BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE | BluetoothGattCharacteristic.PROPERTY_NOTIFY,
+                BluetoothGattCharacteristic.PROPERTY_READ
+                        | BluetoothGattCharacteristic.PROPERTY_WRITE
+                        | BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE
+                        | BluetoothGattCharacteristic.PROPERTY_NOTIFY,
                 BluetoothGattCharacteristic.PERMISSION_READ);
 
         gattService.addCharacteristic(gattCharacteristic);

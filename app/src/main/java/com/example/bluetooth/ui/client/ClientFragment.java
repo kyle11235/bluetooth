@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import com.example.bluetooth.APP;
 import com.example.bluetooth.R;
 import com.example.bluetooth.service.bt.BtActivity;
+import com.example.bluetooth.service.bt.BtPresenter;
 
 public class ClientFragment extends Fragment {
 
@@ -26,17 +27,31 @@ public class ClientFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        final TextView txt = getActivity().findViewById(R.id.txtClient);
+
         // go to scan page
         Button btn = getActivity().findViewById(R.id.btnGo);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                final TextView txt = getActivity().findViewById(R.id.txtClient);
-                txt.setText(txt.getText() + "\n" + "go scan");
                 APP.log("go scan");
+                txt.setText(txt.getText() + "\n" + "go scan");
 
                 startActivity(new Intent(getActivity(), BtActivity.class));
+            }
+        });
+
+        // send message
+        Button btnSend = getActivity().findViewById(R.id.sendMessage);
+        btnSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                APP.log("send message");
+                txt.setText(txt.getText() + "\n" + "send message");
+
+                BtPresenter.sendMessage("hello world");
             }
         });
 

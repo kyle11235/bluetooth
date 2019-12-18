@@ -1,10 +1,6 @@
 package com.example.bluetooth.service.ble;
 
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattServer;
-import android.bluetooth.BluetoothGattServerCallback;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
@@ -13,17 +9,12 @@ import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.os.ParcelUuid;
-import android.util.Log;
 
+import com.example.bluetooth.APP;
 import com.example.bluetooth.service.ble.service.BatteryService;
-import com.example.bluetooth.service.ble.service.Service;
-
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import android.os.Handler;
 
 public class BleCentral extends BleBase{
@@ -31,11 +22,8 @@ public class BleCentral extends BleBase{
     // scanner
     private BluetoothLeScanner scanner;
     private Handler handler = new Handler();
-    public interface Listener {
-        void onFoundDevice(BluetoothDevice device);
-    }
 
-    private Listener listener;
+    // scan callback == BtReceiver, to return founded device
     private ScanCallback scanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
@@ -45,15 +33,23 @@ public class BleCentral extends BleBase{
             if (result == null) {
                 return;
             }
+
             BluetoothDevice device = result.getDevice();
             if (device == null) {
                 return;
             }
 
-            log("device name=" + device.getName() + ", address=" + device.getAddress());
-            listener.onFoundDevice(device);
-
+            // name
             ScanRecord scanRecord = result.getScanRecord();
+            if(device.getName() != null || scanRecord.getDeviceName() != null){
+                log("--- found device has name=" + device.getName());
+            }
+            if(APP.getMacAddress().equals(device.getAddress())){
+                log("--- found my device");
+            }
+            log("device name=" + device.getName() + ", record name=" + scanRecord.getDeviceName() + ", address=" + device.getAddress());
+
+            // service
             List<ParcelUuid> serviceList = scanRecord.getServiceUuids();
             if (serviceList != null) {
                 log("serviceList size=" + serviceList.size());
@@ -67,6 +63,8 @@ public class BleCentral extends BleBase{
                 }
             }
 
+            // return device
+            listener.onBlueEvent(Listener.FOUND_DEVICE, device);
         }
 
         @Override
@@ -84,14 +82,18 @@ public class BleCentral extends BleBase{
 
 
     public BleCentral(Context context, Listener listener) {
-        super(context);
-        this.listener = listener;
+        super(context, listener);
         scanner = adapter.getBluetoothLeScanner();
     }
 
 
 
     public void scan() {
+
+        // stop
+        scanner.stopScan(scanCallback);
+
+        // start
         List<ScanFilter> filters = new ArrayList<ScanFilter>();
 
         ScanFilter filter = new ScanFilter.Builder()
@@ -104,10 +106,9 @@ public class BleCentral extends BleBase{
                 .build();
 
         log("startScan");
-        // filter has bug
+        // filter has bug, with filter you got nothing
         // mBluetoothLeScanner.startScan(filters, settings, scanCallback);
         scanner.startScan(scanCallback);
-
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {

@@ -31,13 +31,14 @@ public class ServerFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        final TextView txt = getActivity().findViewById(R.id.txtServer);
+
         // create server
         Button btn = getActivity().findViewById(R.id.btnStart);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                final TextView txt = getActivity().findViewById(R.id.txtServer);
                 txt.setText(txt.getText() + "\n" + "server is started");
                 APP.log("server is started");
 
