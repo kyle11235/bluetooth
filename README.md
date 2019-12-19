@@ -4,16 +4,20 @@
 
         https://stackoverflow.com/questions/17502818/android-ios-peer-to-peer-architecture
 
-- classic
+- bluethooth classic
 
         https://developer.android.com/reference/android/bluetooth/package-summary
 
-- android BLE
-        
-        https://developer.android.com/guide/topics/connectivity/bluetooth-le.html
+- BLE / bluethooth low energy
 
-        - BLE core specification
+        - BLE protocal
+        https://learn.adafruit.com/introduction-to-bluetooth-low-energy/gatt
+
+        - BLE specification
         https://www.bluetooth.com/specifications/bluetooth-core-specification/
+
+        - android ble API
+        https://developer.android.com/guide/topics/connectivity/bluetooth-le.html
 
         - packet size
         https://stackoverflow.com/questions/38913743/maximum-packet-length-for-bluetooth-le
@@ -35,7 +39,7 @@
         IOS can only play BLE central role (scan others), but BLE is not for large file -_-!
         android as central role has bug - https://issuetracker.google.com/issues/36977196
 
-        - BLE + wifi (IOS has something like BluetoothGattServer / GATT server role ??? )
+        - BLE + wifi
         android phone / ios iphone == BLE central role
         android hardware device == some android play peripheral role
         android device use wifi to upgrade map data / large file from internet directly
