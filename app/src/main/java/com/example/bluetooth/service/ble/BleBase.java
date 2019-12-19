@@ -18,6 +18,8 @@ public class BleBase {
     protected BluetoothManager manager;
     protected BluetoothAdapter adapter;
 
+    public static final int FLAG_FORMAT_UINT16 = 0X01;
+
     public interface Listener {
 
         String FOUND_DEVICE = "FOUND_DEVICE";

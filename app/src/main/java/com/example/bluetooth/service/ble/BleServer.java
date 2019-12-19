@@ -44,7 +44,7 @@ public class BleServer extends BleBase{
         public void onCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset, BluetoothGattCharacteristic characteristic) {
             super.onCharacteristicReadRequest(device, requestId, offset, characteristic);
             log("Device tried to read characteristic, uuid=" + characteristic.getUuid());
-            log("Value=" + Arrays.toString(characteristic.getValue()));
+            log("Value=" + Arrays.toString(characteristic.getValue())); // [b,b,b]
             if (offset != 0) {
                 gattServer.sendResponse(device, requestId, BluetoothGatt.GATT_INVALID_OFFSET, offset,
                         /* value (optional) */ null);

@@ -16,6 +16,12 @@ import java.util.UUID;
 
 public class BatteryService implements Service{
 
+    // official -> 16 bit + constant tail
+    // non-official -> 128 bit
+
+    // e.g. official heart rate service
+    // 0X180D -> 4x4 = 16 bit
+    // 0000180D-0000-1000-8000-00805f9b34fb -> 32x4 = 128 bit
     public static final UUID BATTERY_SERVICE_UUID = UUID.fromString("0000180F-0000-1000-8000-00805f9b34fb");
     public static final UUID BATTERY_LEVEL_UUID = UUID.fromString("00002A19-0000-1000-8000-00805f9b34fb");
     private static final int INITIAL_BATTERY_LEVEL = 50;
@@ -40,7 +46,8 @@ public class BatteryService implements Service{
                         | BluetoothGattCharacteristic.PROPERTY_WRITE
                         | BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE
                         | BluetoothGattCharacteristic.PROPERTY_NOTIFY,
-                BluetoothGattCharacteristic.PERMISSION_READ);
+                BluetoothGattCharacteristic.PERMISSION_READ
+                        | BluetoothGattCharacteristic.PERMISSION_WRITE);
 
         gattService.addCharacteristic(gattCharacteristic);
 

@@ -101,15 +101,16 @@ public class BleClient extends BleBase {
         // This is special handling for the Heart Rate Measurement profile. Data
         // parsing is carried out as per profile specifications.
         if (HEART_RATE_MEASUREMENT_UUID.equals(characteristic.getUuid())) {
-            int flag = characteristic.getProperties();
-            int format = -1;
-            if ((flag & 0x01) != 0) {
+
+            int format = BluetoothGattCharacteristic.FORMAT_UINT8;
+            int propertyFlag = characteristic.getProperties();
+
+            // xxxx xxxx1 & 0000 0001 != 0 -> it's 16 bit
+            if ((propertyFlag & BleBase.FLAG_FORMAT_UINT16) != 0) {
                 format = BluetoothGattCharacteristic.FORMAT_UINT16;
                 log("Heart rate format UINT16.");
-            } else {
-                format = BluetoothGattCharacteristic.FORMAT_UINT8;
-                log("Heart rate format UINT8.");
             }
+
             final int heartRate = characteristic.getIntValue(format, 1);
             log(String.format("Received heart rate: %d", heartRate));
             listener.onBlueEvent(Listener.READ_CHARACTERISTIC, heartRate);
@@ -117,12 +118,12 @@ public class BleClient extends BleBase {
             // For all other profiles, writes the data formatted in HEX.
             final byte[] data = characteristic.getValue();
             if (data != null && data.length > 0) {
-                final StringBuilder stringBuilder = new StringBuilder(data.length);
+                final StringBuilder sb = new StringBuilder(data.length);
                 for (byte byteChar : data) {
-                    stringBuilder.append(String.format("%02X ", byteChar));
+                    sb.append(String.format("%02X ", byteChar));
                 }
                 log("string data=" + new String(data));
-                log("string data=" + stringBuilder.toString());
+                log("string data=" + sb.toString()); // hex(B) hex(B) hex(B) -> BB BB BB
                 listener.onBlueEvent(Listener.READ_CHARACTERISTIC, new String(data));
             }
         }
